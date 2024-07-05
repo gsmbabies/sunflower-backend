@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/users');
-const { checkSchema, checkExact } = require("express-validator");
+const cartController = require('../controllers/cart');
+const { checkSchema, checkExact,body, param } = require("express-validator");
 const {schemaUser} = require("../utils/validators/usersValidatorSchema");
 const {schemaLogin} = require("../utils/validators/loginValidatorSchema");
 const {verify,verifyAdmin} = require('../auth');
@@ -26,6 +27,17 @@ router.post(
   checkExact(), 
   userController.login
 );
+
+router.route("/cart/:id")
+  .post( 
+    param('id').notEmpty().withMessage("user ID cannot be empty"),
+    body('products').isArray().withMessage("must be an array"),
+    cartController.addToCart
+  )
+  .get(
+    param('id').notEmpty().withMessage("user ID cannot be empty"),
+    cartController.getCart
+  );
 
 
 

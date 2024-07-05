@@ -12,11 +12,10 @@ module.exports.login = async (req, res) => {
         return res.status(400).send({error:result.array()});
 
     const data = matchedData(req);
-    console.log(data);
 
     try {
-
-        const user = await User.findOne({email:data.email});
+        console.log(data);
+        const user = await User.findOne({email:data.email}).exec();
 
         if(!user)
             return res.status(404).send({msg:"No email found!"});

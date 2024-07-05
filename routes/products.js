@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const {verify, verifyAdmin} = require("../auth");
-const { checkSchema, param, body, checkExact } = require("express-validator");
+const { checkSchema, param, body, checkExact, query } = require("express-validator");
 const {
   schemaProducts
 } = require("../utils/validators/productsValidatorSchema");
@@ -24,11 +24,7 @@ router
     productController.addProducts
   );
 
-router
-  .route("/:id")
-  .patch(body("*").escape(), productController.editProduct)
-  .get(param("id").escape(), productController.getProductByID)
-  .delete(productController.deleteProduct);
+
 
 router.get(
   "/details/:name",
@@ -38,12 +34,25 @@ router.get(
 
 router.get(
   "/getProductsByArray",
-  body("products").isArray(),
+
   productController.getProductsByArray
 );
 
 router.get("/featured/all", productController.getFeaturedProducts);
 router.get("/alsoLikeProduct/all", productController.getAlsoLikeProduct);
 router.post("/upload", productController.upload);
+
+
+router
+  .route("/:id")
+  .patch(body("*").escape(), productController.editProduct)
+  .get(param("id").escape(), productController.getProductByID)
+  .delete(productController.deleteProduct);
+
+
+
+
+
+
 
 module.exports = router;

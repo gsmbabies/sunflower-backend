@@ -180,10 +180,24 @@ module.exports.getProductByID = async ( req, res ) => {
 //get product by Array of ID's
 module.exports.getProductsByArray = async ( req, res ) => {
     try {
-        const result = validationResult(req);
-        console.log(result);
+        const productItems = req.query;
+        const productList = [];
+
+        for(let key in productItems){
+            if(!mongoose.isValidObjectId(key))
+                continue;
+            const findProduct = await Products.findById(key);
+            if(!findProduct){
+                continue;
+            } else {
+                productList.push({...findProduct.toObject(), quantity: Number(productItems[key])});
+            }
+        }
+
+        return res.status(201).send({msg:productList});
     } catch (error) {
-        return res.sendStatus(500);
+        console.error(error);
+        return res.status(500).send({msg:error});
     }   
 }
 
