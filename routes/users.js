@@ -28,17 +28,22 @@ router.post(
   userController.login
 );
 
-router.route("/cart/:id")
+router.route("/cart")
   .post( 
-    param('id').notEmpty().withMessage("user ID cannot be empty"),
-    body('products').isArray().withMessage("must be an array"),
+    verify,
     cartController.addToCart
   )
   .get(
-    param('id').notEmpty().withMessage("user ID cannot be empty"),
+    verify,
     cartController.getCart
+  )
+  .put(
+    verify,
+    cartController.editQuantity
+  )
+  .delete(
+    verify,
+    cartController.removeProduct
   );
-
-
 
 module.exports = router;
