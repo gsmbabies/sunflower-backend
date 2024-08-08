@@ -8,6 +8,8 @@ const session = require('express-session');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products');
+var cartRouter = require('./routes/cart');
+var orderRouter = require('./routes/order');
 
 const fileUpload = require('express-fileupload');
 
@@ -31,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/users', usersRouter, cartRouter, orderRouter);
 app.use('/products', productsRouter);
 
 //session

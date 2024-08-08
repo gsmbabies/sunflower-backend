@@ -1,11 +1,11 @@
-const { validationResult, matchedData } = require('express-validator');
 const Carts = require('../models/Cart');
 const { default: mongoose } = require('mongoose');
+const {  matchedData, validationResult } = require('express-validator');
 
 module.exports.addToCart = async ( req, res ) => {
-    
+
     //get from auth 
-    
+
     try {
         const { id }  = req.user;
         const products = req.body.products;
@@ -77,7 +77,8 @@ module.exports.addToCart = async ( req, res ) => {
         return res.status(500).send({error: "Something went wrong!"});
     }
 
-}
+} 
+ 
 
 module.exports.getCart = async ( req, res ) => {
     const { id } = req.user;
@@ -106,8 +107,6 @@ module.exports.editQuantity = async ( req, res ) => {
 
     if(!mongoose.isValidObjectId(productID))
         return res.status(400).send({msg:"Invalid object id"});
-
-    // console.log(isNan(quantity));
     
     if(isNaN(quantity))
         return res.status(400).send({msg: "Invalid number of quantity"});
@@ -135,6 +134,61 @@ module.exports.editQuantity = async ( req, res ) => {
 }
 
 module.exports.removeProduct = async ( req, res ) => {
-    return res.status(200).send( {msg:"Product remove successfully!"} );
+    const product = req.params.id;
+    const { id } = req.user;
+    
+    if(!mongoose.isValidObjectId(product))
+        return res.status(404).send( {msg:"Invalid Product!"} );
+    
+    try {
+        const removeProduct = await Carts.findOneAndUpdate( 
+            { userID: id},
+            { $pull: { products: { productID:product } } },    
+            { new:true }
+        );    
+        
+        if(!removeProduct)
+            return res.status(404).send( { msg:"Cannot find cart or product to remove" } )
+    
+        return res.status(200).send( {
+            msg : "product remove!",    
+            data : removeProduct
+        } );
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send( { msg: "Something went wrong removing product!" } );
+    }
+   
+}
+ 
+module.exports.editShipAdd = async ( req, res ) => {
+    const { id } = req.user;
+    const result = validationResult(req);
+
+    if(!result.isEmpty())
+        return res.status(400).send( { msg : result.array() } );
+
+    const data = matchedData(req);
+
+    try {
+        const findUserCart = await Carts.findOneAndUpdate(
+            { userID : id },
+            { $set : { shipAdd : data.shipAdd  } },
+            { new: true } )
+            .exec();
+        
+        if(!findUserCart)
+            return res.status(404).send( { msg : "Cannot find your cart!" } );
+
+        return res.status(200).send( { 
+            msg: "Shipping address added!",
+            data: findUserCart 
+        } );
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send( { msg: "Something went wrong editing shipping address!" } );
+    }
 }
 

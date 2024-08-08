@@ -10,10 +10,10 @@ module.exports.createToken = ({_id, email,isAdmin}) => {
     const payLoad = {
         id: _id,
         email: email,
-        isAdmin: isAdmin
+        isAdmin: isAdmin,
     }
     try {
-        const token = jwt.sign(payLoad,secretKey);
+        const token = jwt.sign(payLoad,secretKey, {expiresIn : '1d'});
         return token;
     } catch (error) {
         console.log(error);

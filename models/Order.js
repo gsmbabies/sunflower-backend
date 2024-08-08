@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const cartSchema = new Schema({
+const orderSchema = new Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Users'
@@ -18,17 +18,31 @@ const cartSchema = new Schema({
       default: 1
     }
   }],
+  total:{
+    type: Number,
+    required : [true, "total price cannot be empty!"]
+  },
+  status:{
+    type: String,
+    maxLength: 1,
+    default: "p"
+  },
   shipAdd: {
     type: String,
-    default: ''
+    required: [true, "Please enter a shipping address"]
   },
+  paid:{
+    type: Number,
+    maxLength: 1,
+    default : 0
+  },  
   created: {
     type: Date,
     default: Date.now(),
   }
 });
 
-const Carts = mongoose.model("Carts", cartSchema);
-module.exports = Carts;
+const Orders = mongoose.model("Orders", orderSchema);
+module.exports = Orders;
 
 mongoose.connection.close();
