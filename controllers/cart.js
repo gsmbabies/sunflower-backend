@@ -90,11 +90,7 @@ module.exports.getCart = async ( req, res ) => {
         if(!findUserCart)
             return res.status(404).send({msg:"Your cart is empty"});
 
-        const iteratedProducts = findUserCart.toObject().products.map(product => {
-            return {...product.productID, quantity: product.quantity}
-        }); 
-        
-        return res.status(200).send({msg: iteratedProducts, shipAdd : findUserCart.shipAdd });
+        return res.status(200).send({msg: findUserCart.products, shipAdd : findUserCart.shipAdd });
         
     } catch (error) {
         
