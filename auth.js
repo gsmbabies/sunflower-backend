@@ -13,7 +13,7 @@ module.exports.createToken = ({_id, email,isAdmin}) => {
         isAdmin: isAdmin,
     }
     try {
-        const token = jwt.sign(payLoad,secretKey, {expiresIn : '10h'});
+        const token = jwt.sign(payLoad,secretKey, {expiresIn : '12h'});
         return token;
     } catch (error) {
         console.log(error);
